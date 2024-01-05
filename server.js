@@ -20,6 +20,42 @@ const db = mysql.createConnection(
     console.log(`Connected to the employees_db database.`)
   );
 
-// Express middleware
+// Express middleware; not sure if I need it yet
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+const viewDep = 'View all departments';
+const viewRol = 'View all roles';
+const viewEmp = 'View all employees';
+const addDep = 'Add a department';
+const addEmp = 'Add an employee';
+const upEmp = 'Update an employee';
+
+/* Extra security from https://github.com/mysqljs/mysql */
+
+
+
+inquirer
+    .createPromptModule([
+        {
+            type: 'list',
+            message: 'What would you like to do?',
+            name:'menuChoice',
+            choices: [viewDep, viewRol, viewEmp, addDep, addEmp, upEmp],
+        },
+    ])
+    .then((response) =>{
+        var userChoice = response.menuChoice;
+        
+        // ...
+      
+          switch(response.menuChoice){
+              case viewDep: 
+              var sql = 'SELECT * FROM department';
+              db.query(sql, function (error, results, fields){
+                  if (error) throw error;
+              })
+          };
+    }
+        
+    );
