@@ -47,8 +47,8 @@ inquirer
 
     switch (response.menuChoice) {
       case viewDep:
-        const sql = "SELECT * FROM department";
-        db.query(sql, function (error, results) {
+        const sqlvDep = "SELECT * FROM department";
+        db.query(sqlvDep, function (error, results) {
           if (error) {
             throw error;
           } else {
@@ -56,8 +56,8 @@ inquirer
           }
         });
       case viewRol:
-        const sql = "SELECT * FROM role";
-        db.query(sql, function (error, results) {
+        const sqlvRol = "SELECT * FROM role";
+        db.query(sqlvRol, function (error, results) {
           if (error) {
             throw error;
           } else {
@@ -65,8 +65,8 @@ inquirer
           }
         });
       case viewEmp:
-        const sql = "SELECT * FROM employees";
-        db.query(sql, function (error, results) {
+        const sqlvEmp = "SELECT * FROM employees";
+        db.query(sqlvEmp, function (error, results) {
           if (error) {
             throw error;
           } else {
@@ -84,7 +84,7 @@ inquirer
                 
             ])
             .then((response)=> {
-            const sql1 = `INSERT INTO department(name) VALUES ${response.depname}`;}
+            const sql1 = `INSERT INTO department(name) VALUES ${response.depname}`;},
             db.query(sql1, function (err, results){
                 if (err){
                     console.log(err);
