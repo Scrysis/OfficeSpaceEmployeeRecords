@@ -29,63 +29,97 @@ const prompt = inquirer.prompt;
 /* const { menu } = async function menQues (){
     return await questions.menuQuestion();}; */
 
-    const viewDep = "View all departments";
-    const viewRol = "View all roles";
-    const viewEmp = "View all employees";
-    const addDep = "Add a department";
-    const addRole = "Add a role"
-    const addEmp = "Add an employee";
-    const upEmp = "Update an employee";
-    const exit = "Exit";
-    
-    
-    const menuQues = [
-      {
-        name: "menuSelect",
-        type: "list",
-        message: "Please select a menu option:",
-        choices: [viewDep, viewRol, viewEmp, addDep, addRole, addEmp, upEmp, exit],
-      },
-    ]; 
+const viewDep = "View all departments";
+const viewRol = "View all roles";
+const viewEmp = "View all employees";
+const addDep = "Add a department";
+const addRole = "Add a role";
+const addEmp = "Add an employee";
+const upEmp = "Update an employee";
+const exit = "Exit";
+
+const menuQues = [
+  {
+    name: "menuSelect",
+    type: "list",
+    message: "Please select a menu option:",
+    choices: [viewDep, viewRol, viewEmp, addDep, addRole, addEmp, upEmp, exit],
+  },
+];
 
 const doStuff = async (menu) => {
+  switch (menu) {
+    case viewDep:
+      viewDepartments();
+      break;
+    case viewRol:
+      viewRoles();
+      break;
+    case viewEmp:
+      viewEmployees();
+      break;
+    case addDep:
+      console.log("department block");
+      inquirer
+        .prompt([
+          {
+            name: "departmentName",
+            type: "input",
+            message: "Please enter the name of the department you wish to add:",
+          },
+        ])
+        .then((data) => {
+          db.query(
+            `INSERT INTO department (name) values (?)`,
+            data.departmentName,
+            function (err, results) {
+              if (err) {
+                console.log(err);
+              } else {
+                viewDepartments();
+              }
+            }
+          );
+        });
+      break;
+    case addRole:
+      inquirer.prompt(questions.addRoleQuestion()).then((data) => {
+        addRoleDB(data);
+      });
+      break;
+    case addEmp:
+      const { newEmployee } = async function empQues() {
+        return await questions.addEmployeeQuestion();
+      };
+      addEmployee(
+        newEmployee.employeeFirstName,
+        newEmployee.employeeLastName,
+        newEmployee.roleId,
+        newEmployee.managerID
+      );
+      break;
+    case upEmp:
+      viewEmployees();
+      const { updateEmp } = async function upQues() {
+        return await questions.updateEmployeeQuestion();
+      };
+      updateEmployee(
+        updateEmp.employeeID,
+        updateEmp.employeeFirstName,
+        updateEmp.employeeLastName,
+        updateEmp.roleID,
+        updateEmp.managerID
+      );
+      viewEmployees();
+      break;
+  }
+};
 
-switch (menu) {
-  case viewDep:
-    viewDepartments();
-    break;
-  case viewRol:
-    viewRoles();
-    break;
-  case viewEmp:
-    viewEmployees();
-    break;
-  case addDep:
-    
-    break;
-  case addRole:
-    const {newRole} = async function rolQues () { 
-        return await questions.addRoleQuestion();};
-    addRoleDB(newRole.roleTitle, newRole.roleSalary, newRole.departmentID);
-    break;
-  case addEmp:
-    const{newEmployee} = async function empQues () {
-        return await questions.addEmployeeQuestion();};
-    addEmployee(newEmployee.employeeFirstName, newEmployee.employeeLastName, newEmployee.roleId, newEmployee.managerID);
-    break;
-  case upEmp:
-    viewEmployees();
-    const {updateEmp} = async function upQues (){ 
-        return await questions.updateEmployeeQuestion();};
-    updateEmployee(updateEmp.employeeID, updateEmp.employeeFirstName, updateEmp.employeeLastName, updateEmp.roleID, updateEmp.managerID);
-    viewEmployees();
-    break;
-}};
-
-function runAddDep (){
-    const {newDep} = async function depQues () {
-        return await questions.addDepartmentQuestion();};
-    addDepartment(newDep.departmentName);
+function runAddDep() {
+  const { newDep } = async function depQues() {
+    return await questions.addDepartmentQuestion();
+  };
+  addDepartment(newDep.departmentName);
 }
 
 function viewDepartments() {
@@ -108,7 +142,8 @@ function viewEmployees() {
 
 function addDepartment(depName) {
   db.query(
-    `INSERT INTO department (name) values (${depName})`,
+    `INSERT INTO department (name) values (?)`,
+    depName,
     function (err, results) {
       if (err) {
         console.log(err);
@@ -119,14 +154,21 @@ function addDepartment(depName) {
   );
 }
 
-function addRoleDB(roleTitle, roleSalary, depId) {
+function addRoleDB(roleAnswers) {
+  const roleData = [
+    roleAnswers.roleTitle,
+    roleAnswers.roleSalary,
+    roleAnswers.departmentID,
+  ];
+  var salary = Number(roleAnswers.roleSalary);
+  var depId = Number(roleAnswers.departmentID);
   db.query(
-    `INSERT INTO role (title, salary, department_id) values (${roleTitle}, ${roleSalary}, ${depId})`,
+    `INSERT INTO role (title, salary, department_id) VALUES ('${roleAnswers.roleTitle}', ${salary}, ${depId})`,
     function (err, results) {
       if (err) {
         console.log(err);
       } else {
-        console.table(results);
+        viewRoles();
       }
     }
   );
@@ -190,13 +232,14 @@ function updateEmployee(changeId, firstname, lastname, roleid, managerid) {
 }
 
 const init = async () => {
-    let menu;
-
-    // While the user has not chosen to exit...
-    while (menu != "Exit") {
+  let menu;
+  menu = (await prompt(menuQues)).menuSelect; // Get their choice by awaiting a prompt
+  doStuff(menu);
+  // While the user has not chosen to exit...
+  /* while (menu != "Exit") {
         menu = (await prompt(menuQues)).menuSelect; // Get their choice by awaiting a prompt
         doStuff(menu);
-    }
-}
+    } */
+};
 
 init();

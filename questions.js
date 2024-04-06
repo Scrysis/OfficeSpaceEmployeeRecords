@@ -79,7 +79,7 @@ module.exports = () => {
                 message: "Please enter the department ID for this role:",
             },
         ];
-        return inquirer.prompt(question);
+        return question;
     },
     updateEmployeeQuestion: () => {
         const question = [
