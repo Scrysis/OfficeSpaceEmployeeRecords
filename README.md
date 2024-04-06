@@ -12,7 +12,7 @@ Welcome to the Office Space Employee Records app!
 
 With this commandline app, you can look up the departments, roles, and employees in your database.
 
-After downloading the repo, open the SECOND OfficeSpaceEmployeeRecords folder (management is sincerely apologetic for the inconvenience),
+After downloading the repo, open the OfficeSpaceEmployeeRecords folder (management is sincerely apologetic for the inconvenience),
 and run
 
 npm install
