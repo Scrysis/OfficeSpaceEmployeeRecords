@@ -3,6 +3,7 @@ const inquirer = require("inquirer");
 const express = require("express");
 const mysql = require("mysql2");
 const questions = require("./questions")();
+inquirer.registerPrompt("search-list", require("inquirer-search-list"));
 
 const PORT = process.env.PORT || 3001;
 
@@ -23,7 +24,31 @@ const db = mysql.createConnection(
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-const { menu } = await questions.menuQuestion();
+const prompt = inquirer.prompt;
+
+/* const { menu } = async function menQues (){
+    return await questions.menuQuestion();}; */
+
+    const viewDep = "View all departments";
+    const viewRol = "View all roles";
+    const viewEmp = "View all employees";
+    const addDep = "Add a department";
+    const addRole = "Add a role"
+    const addEmp = "Add an employee";
+    const upEmp = "Update an employee";
+    const exit = "Exit";
+    
+    
+    const menuQues = [
+      {
+        name: "menuSelect",
+        type: "list",
+        message: "Please select a menu option:",
+        choices: [viewDep, viewRol, viewEmp, addDep, addRole, addEmp, upEmp, exit],
+      },
+    ]; 
+
+const doStuff = async (menu) => {
 
 switch (menu) {
   case viewDep:
@@ -36,24 +61,28 @@ switch (menu) {
     viewEmployees();
     break;
   case addDep:
-    const {newDep} = await questions.addDepartmentQuestion();
+    const {newDep} = async function depQues () {
+        return await questions.addDepartmentQuestion();};
     addDepartment(newDep.departmentName);
     break;
   case addRole:
-    const {newRole} = await questions.addRoleQuestion();
+    const {newRole} = async function rolQues () { 
+        return await questions.addRoleQuestion();};
     addRoleDB(newRole.roleTitle, newRole.roleSalary, newRole.departmentID);
     break;
   case addEmp:
-    const{newEmployee} = await questions.addEmployeeQuestion();
+    const{newEmployee} = async function empQues () {
+        return await questions.addEmployeeQuestion();};
     addEmployee(newEmployee.employeeFirstName, newEmployee.employeeLastName, newEmployee.roleId, newEmployee.managerID);
     break;
   case upEmp:
     viewEmployees();
-    const {updateEmp} = await questions.updateEmployeeQuestion();
+    const {updateEmp} = async function upQues (){ 
+        return await questions.updateEmployeeQuestion();};
     updateEmployee(updateEmp.employeeID, updateEmp.employeeFirstName, updateEmp.employeeLastName, updateEmp.roleID, updateEmp.managerID);
     viewEmployees();
     break;
-}
+}};
 
 function viewDepartments() {
   db.query("SELECT * FROM department", function (err, results) {
@@ -155,3 +184,15 @@ function updateEmployee(changeId, firstname, lastname, roleid, managerid) {
     }
   });
 }
+
+const init = async () => {
+    let menu;
+
+    // While the user has not chosen to exit...
+    while (menu != "Exit") {
+        menu = (await prompt(menuQues)).menuSelect; // Get their choice by awaiting a prompt
+        doStuff(menu);
+    }
+}
+
+init();
