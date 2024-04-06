@@ -34,7 +34,7 @@ module.exports = () => {
                 message: "Please enter the name of the department you wish to add:",
             },
         ];
-        return inquirer.prompt(question);
+        return question;
     },
     addEmployeeQuestion: () => {
         const question = [
@@ -59,7 +59,7 @@ module.exports = () => {
                 message: "Please enter the ID number for the employee's manager:",
             },
         ];
-        return inquirer.prompt(question);
+        return question;
     },
     addRoleQuestion: () => {
         const question = [
@@ -109,7 +109,7 @@ module.exports = () => {
                 message: "Please enter in the new manager ID for the employee:",
             },
         ];
-        return inquirer.prompt(question);
+        return question;
     },
   };
 };

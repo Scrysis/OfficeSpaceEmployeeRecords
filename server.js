@@ -88,28 +88,15 @@ const doStuff = async (menu) => {
       });
       break;
     case addEmp:
-      const { newEmployee } = async function empQues() {
-        return await questions.addEmployeeQuestion();
-      };
-      addEmployee(
-        newEmployee.employeeFirstName,
-        newEmployee.employeeLastName,
-        newEmployee.roleId,
-        newEmployee.managerID
-      );
+      inquirer.prompt(questions.addEmployeeQuestion()).then((data) => {
+        addEmployee(data);
+      });
       break;
     case upEmp:
       viewEmployees();
-      const { updateEmp } = async function upQues() {
-        return await questions.updateEmployeeQuestion();
-      };
-      updateEmployee(
-        updateEmp.employeeID,
-        updateEmp.employeeFirstName,
-        updateEmp.employeeLastName,
-        updateEmp.roleID,
-        updateEmp.managerID
-      );
+      inquirer.prompt(questions.updateEmployeeQuestion()).then((data) => {
+        updateEmployee(data);
+      });
       viewEmployees();
       break;
   }
@@ -148,7 +135,7 @@ function addDepartment(depName) {
       if (err) {
         console.log(err);
       } else {
-        console.table(results);
+        viewDepartments();
       }
     }
   );
@@ -174,20 +161,28 @@ function addRoleDB(roleAnswers) {
   );
 }
 
-function addEmployee(firstname, lastname, roleid, managerid) {
+function addEmployee(data) {
+var roleid = Number(data.roleId);
+var managerid = Number(data.managerID);
   db.query(
-    `INSERT INTO employees (first_name, last_name, role_id, manager_id) values (${firstname}, ${lastname}, ${roleid}, ${managerid})`,
+    `INSERT INTO employees (first_name, last_name, role_id, manager_id) values ('${data.employeeFirstName}', '${data.employeeLastName}', ${roleid}, ${managerid})`,
     function (err, results) {
       if (err) {
         console.log(err);
       } else {
-        console.table(results);
+        viewEmployees();
       }
     }
   );
 }
 
-function updateEmployee(changeId, firstname, lastname, roleid, managerid) {
+function updateEmployee(data) {
+
+  var changeId = Number(data.employeeID);
+  var roleid = Number(data.roleID);
+  var managerid = Number(data.managerID);
+
+
   const sqlShow = `SELECT
                         first_name,
                         last_name,
@@ -200,8 +195,8 @@ function updateEmployee(changeId, firstname, lastname, roleid, managerid) {
 
   const sqlChange = `UPDATE employees
                        SET
-                        first_name = ${firstname},
-                        last_name = ${lastname},
+                        first_name = '${data.employeeFirstName}',
+                        last_name = '${data.employeeLastName}',
                         role_id = ${roleid},
                         manager_id = ${managerid}
                        WHERE
