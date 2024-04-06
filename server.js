@@ -61,9 +61,7 @@ switch (menu) {
     viewEmployees();
     break;
   case addDep:
-    const {newDep} = async function depQues () {
-        return await questions.addDepartmentQuestion();};
-    addDepartment(newDep.departmentName);
+    
     break;
   case addRole:
     const {newRole} = async function rolQues () { 
@@ -84,21 +82,27 @@ switch (menu) {
     break;
 }};
 
+function runAddDep (){
+    const {newDep} = async function depQues () {
+        return await questions.addDepartmentQuestion();};
+    addDepartment(newDep.departmentName);
+}
+
 function viewDepartments() {
   db.query("SELECT * FROM department", function (err, results) {
-    console.log(results);
+    console.table(results);
   });
 }
 
 function viewRoles() {
   db.query("SELECT * FROM role", function (err, results) {
-    console.log(results);
+    console.table(results);
   });
 }
 
 function viewEmployees() {
   db.query("SELECT * FROM employees", function (err, results) {
-    console.log(results);
+    console.table(results);
   });
 }
 
@@ -109,7 +113,7 @@ function addDepartment(depName) {
       if (err) {
         console.log(err);
       } else {
-        console.log(results);
+        console.table(results);
       }
     }
   );
@@ -122,7 +126,7 @@ function addRoleDB(roleTitle, roleSalary, depId) {
       if (err) {
         console.log(err);
       } else {
-        console.log(results);
+        console.table(results);
       }
     }
   );
@@ -135,7 +139,7 @@ function addEmployee(firstname, lastname, roleid, managerid) {
       if (err) {
         console.log(err);
       } else {
-        console.log(results);
+        console.table(results);
       }
     }
   );
@@ -165,7 +169,7 @@ function updateEmployee(changeId, firstname, lastname, roleid, managerid) {
     if (err) {
       console.log(err);
     } else {
-      console.log(results);
+      console.table(results);
     }
   });
 
@@ -173,14 +177,14 @@ function updateEmployee(changeId, firstname, lastname, roleid, managerid) {
     if (err) {
       console.log(err);
     } else {
-      console.log(results);
+      console.table(results);
     }
   });
   db.query(sqlShow, function (err, results) {
     if (err) {
       console.log(err);
     } else {
-      console.log(results);
+      console.table(results);
     }
   });
 }
