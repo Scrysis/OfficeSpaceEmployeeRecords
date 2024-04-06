@@ -3,6 +3,8 @@ Demo project where we're going to see who forgot their TTPS sheets.
 
 Video link:  https://youtu.be/dGiJ3piwVwY
 
+Repository link: https://github.com/Scrysis/OfficeSpaceEmployeeRecords 
+
 ![Screenshot of app in action!](screenshot.jpg)
 
 
